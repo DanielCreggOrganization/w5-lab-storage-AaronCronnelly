@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../services/storage.service';
 
@@ -16,25 +16,29 @@ export class HomePage {
   value: string = '';
   output: string = '';
 
-  constructor(private storageService: StorageService) {}
+  constructor(private platform: Platform, private storageService: StorageService) {
+    this.platform.ready().then(() => {
+      this.storageService.set('key', 'value');
+    });
+  }
 
-  async setItem(){
-    try{
+  async setItem() {
+    try {
       await this.storageService.set(this.key, this.value);
-      this.output = 'Set ${this.key}: ${this.value}';
-    } catch(e){
-      console.error('Error setting item', e);
-      this.output = `Error setting item: ${e}`;
+      this.output = `Set ${this.key}: ${this.value}`;
+    } catch (error) {
+      console.error('Error setting item', error);
+      this.output = `Error setting item: ${error}`;
     }
   }
 
   async getItem() {
-    try{
+    try {
       const value = await this.storageService.get(this.key);
-      this.output = `Got ${this.key}: ${value}`;
-    }catch(e){
-      console.error('Error getting item', e);
-      this.output = `Error getting item: ${e}`;
+      this.output = `Get ${this.key}: ${value}`;
+    } catch (error) {
+      console.error('Error getting item', error);
+      this.output = `Error getting item: ${error}`;
     }
   }
 
